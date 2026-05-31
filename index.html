@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отель «Добрыня» — Отдых у моря</title>
+    <style>
+        /* Базовые стили и шрифты */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: #f0f4f8;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        /* Шапка сайта (Навигация) */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #00d2ff;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #00d2ff;
+        }
+
+        /* Главный баннер (Hero Section) */
+        .hero {
+            min-height: 80vh;
+            background: linear-gradient(rgba(30, 60, 114, 0.6), rgba(42, 82, 152, 0.6)), 
+                        url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            max-width: 600px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        }
+
+        .btn {
+            background: #00d2ff;
+            color: #fff;
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #fff;
+            color: #1e3c72;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Секция "Наши Номера" */
+        .section {
+            padding: 80px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+            position: relative;
+            color: #1e3c72;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #00d2ff;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .room-card {
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .room-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(30, 60, 114, 0.15);
+        }
+
+        .room-img {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .room-info {
+            padding: 25px;
+        }
+
+        .room-info h3 {
+            margin-bottom: 10px;
+            font-size: 22px;
+            color: #1e3c72;
+        }
+
+        .room-price {
+            color: #00d2ff;
+            font-weight: 700;
+            font-size: 20px;
+            margin-top: 15px;
+            display: block;
+        }
+
+        .more-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #1e3c72;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: underline;
+        }
+
+        /* --- СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКЕН (ПОДРОБНЕЕ) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 34, 64, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 650px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transform: scale(0.8);
+            transition: transform 0.4s ease;
+            position: relative;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            color: #fff;
+            cursor: pointer;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            color: #00d2ff;
+        }
+
+        .modal-hero-img {
+            height: 280px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h2 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .modal-features {
+            margin: 20px 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .modal-features li {
+            font-size: 15px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .modal-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #00d2ff;
+            font-weight: bold;
+        }
+
+        /* Форма обратной связи (Glassmorphism стиль) */
+        .booking-section {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            padding: 80px 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .feedback-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #00d2ff;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .form-group select option {
+            color: #2c3e50;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #00d2ff;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #00b4db;
+        }
+
+        /* Подвал сайта */
+        footer {
+            background: #112240;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 30px;
+            font-size: 14px;
+        }
+
+        /* Адаптивность для мобилок */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 20px;
+            }
+            nav {
+                margin-top: 15px;
+            }
+            nav a {
+                margin: 0 10px;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .section {
+                padding: 50px 20px;
+            }
+            .modal-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка сайта -->
+    <header>
+        <div class="logo">ДОБРЫНЯ<span>.</span></div>
+        <nav>
+            <a href="#about">Отель</a>
+            <a href="#rooms">Номера</a>
+            <a href="#booking">Бронирование</a>
+        </nav>
+    </header>
+
+    <!-- Главный экран -->
+    <section class="hero" id="about">
+        <h1>Отель «Добрыня»</h1>
+        <p>Идеальный отдых на самом берегу моря. Комфортабельные номера, чистый пляж и незабываемые закаты ждут вас.</p>
+        <a href="#booking" class="btn">Забронировать отдых</a>
+    </section>
+
+    <!-- Секция с номерами -->
+    <section class="section" id="rooms">
+        <h2 class="section-title">Наши уютные номера</h2>
+        <div class="rooms-grid">
+            
+            <!-- Номер 1 -->
+            <div class="room-card" onclick="openModal('standard')">
+                <div class="room-img" style="background-image: url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=500&q=80');"></div>
+                <div class="room-info">
+                    <h3>Стандарт Комфорт</h3>
+                    <p>Уютный однокомнатный номер со всеми удобствами и боковым видом на море.</p>
+                    <span class="room-price">от 3 500 ₽ / сутки</span>
+                    <span class="more-link">Подробнее о номере →</span>
+                </div>
+            </div>
+
+            <!-- Номер 2 -->
+            <div class="room-card" onclick="openModal('lux')">
+                <div class="room-img" style="background-image: url('https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=500&q=80');"></div>
+                <div class="room-info">
+                    <h3>Семейный Люкс</h3>
+                    <p>Просторный двухкомнатный номер для всей семьи. Терраса с панорамным видом.</p>
+                    <span class="room-price">от 6 000 ₽ / сутки</span>
+                    <span class="more-link">Подробнее о номере →</span>
+                </div>
+            </div>
+
+            <!-- Номер 3 -->
+            <div class="room-card" onclick="openModal('apartments')">
+                <div class="room-img" style="background-image: url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=500&q=80');"></div>
+                <div class="room-info">
+                    <h3>Апартаменты у моря</h3>
+                    <p>Премиум вариант с собственной кухней и выходом прямо на пляж.</p>
+                    <span class="room-price">от 8 500 ₽ / сутки</span>
+                    <span class="more-link">Подробнее о номере →</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ИНТЕРАКТИВНОЕ МОДАЛЬНОЕ ОКНО -->
+    <div class="modal-overlay" id="roomModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="document.getElementById('roomModal').classList.remove('active')">&times;</span>
+            <div class="modal-hero-img" id="modalImg"></div>
+            <div class="modal-body">
+                <h2 id="modalTitle">Название номера</h2>
+                <p id="modalDesc">Полное описание номера...</p>
+                <h4 style="margin-top: 15px; color: #1e3c72;">Что включено в стоимость:</h4>
+                <ul class="modal-features" id="modalFeatures">
+                    <!-- Будет заполняться через JS -->
+                </ul>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid #ddd;">
+                    <span id="modalPrice" style="font-size: 22px; font-weight: 700; color: #00d2ff;">0 ₽</span>
+                    <a href="#booking" class="btn" style="padding: 10px 25px; font-size: 16px;" onclick="document.getElementById('roomModal').classList.remove('active')">Выбрать этот</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Форма обратной связи / Бронирования -->
+    <section class="booking-section" id="booking">
+        <h2 style="font-size: 32px; margin-bottom: 10px; text-align: center;">Оставить заявку</h2>
+        <p style="margin-bottom: 30px; color: rgba(255,255,255,0.8); text-align: center;">Заполните форму, и мы свяжемся с вами для подтверждения брони</p>
+        
+        <form class="feedback-form" id="orderForm">
+            <div class="form-group">
+                <label for="name">Ваше имя</label>
+                <input type="text" id="name" placeholder="Иван Иванов" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Номер телефона</label>
+                <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" required>
+            </div>
+            <div class="form-group">
+                <label for="room-type">Категория номера</label>
+                <select id="room-type">
+                    <option value="standard">Стандарт Комфорт</option>
+                    <option value="lux">Семейный Люкс</option>
+                    <option value="apartments">Апартаменты у моря</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-btn">Отправить заявку</button>
+        </form>
+    </section>
+
+    <!-- Подвал сайта -->
+    <footer>
+        <p>&copy; 2026 Индивидуальный проект: Отель «Добрыня — отдых у моря». Все права защищены.</p>
+    </footer>
+
+    <!-- Обновленный JavaScript для интерактива -->
+    <script>
+        // База данных наших номеров прямо в коде для быстрой загрузки
+        const roomData = {
+            standard: {
+                title: 'Стандарт Комфорт',
+                desc: 'Прекрасный выбор для пар или одиночных путешественников. Номер укомплектован современной эргономичной мебелью. Большие окна обеспечивают прекрасное естественное освещение, а мягкий морской бриз сделает ваш сон крепким.',
+                price: 'от 3 500 ₽ / сутки',
+                img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=500&q=80',
+                features: ['Площадь: 22 кв.м.', 'Двуспальная кровать King-size', 'Кондиционер', 'Высокоскоростной Wi-Fi', 'Мини-бар', 'Собственная ванная комната']
+            },
+            lux: {
+                title: 'Семейный Люкс',
+                desc: 'Идеальное решение для полноценного отдыха всей семьей. Две раздельные уютные комнаты позволят с комфортом разместиться родителям и детям. Главная гордость номера — огромная терраса, откуда открываются потрясающие виды на морские закаты.',
+                price: 'от 6 000 ₽ / сутки',
+                img: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=500&q=80',
+                features: ['Площадь: 45 кв.м.', 'Две комнаты', 'Огромная терраса с шезлонгами', 'Smart TV в каждой комнате', 'Халаты и тапочки', 'Детская кроватка (по запросу)']
+            },
+            apartments: {
+                title: 'Апартаменты у моря',
+                desc: 'Роскошный вариант для тех, кто ценит максимальную независимость и премиальный уровень комфорта. Своя полноценная кухня со встроенной техникой, дизайнерский интерьер и индивидуальный персональный выход прямо на песчаный пляж отеля.',
+                price: 'от 8 500 ₽ / сутки',
+                img: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=500&q=80',
+                features: ['Площадь: 60 кв.м.', 'Прямой выход на пляж', 'Кухня с плитой и кофемашиной', 'Стиральная и посудомоечная машины', 'Сейф для ценных вещей', 'Панорамное остекление']
+            }
+        };
+
+        // Функция открытия модального окна
+        function openModal(roomKey) {
+            const data = roomData[roomKey];
+            if (!data) return;
+
+            // Заполняем модалку данными
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalDesc').innerText = data.desc;
+            document.getElementById('modalPrice').innerText = data.price;
+            document.getElementById('modalImg').style.backgroundImage = `url('${data.img}')`;
+
+            // Генерируем список удобств
+            const featuresList = document.getElementById('modalFeatures');
+            featuresList.innerHTML = ''; // Очищаем старый список
+            data.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.innerText = feature;
+                featuresList.appendChild(li);
+            });
+
+            // Автоматически переключаем выпадающий список в форме на выбранный номер
+            document.getElementById('room-type').value = roomKey;
+
+            // Показываем окно
+            document.getElementById('roomModal').classList.add('active');
+        }
+
+        // Функция закрытия при клике на темную область вокруг окна
+        function closeModal(event) {
+            if(event.target.classList.contains('modal-overlay')) {
+                document.getElementById('roomModal').classList.remove('active');
+            }
+        }
+
+        // Обработка отправки формы
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const room = document.getElementById('room-type').options[document.getElementById('room-type').selectedIndex].text;
+            
+            alert(`Спасибо за заявку, ${name}!\nМы забронировали для вас "${room}".\nМенеджер свяжется с вами по телефону: ${phone}`);
+            this.reset();
+        });
+    </script>
+</body>
+</html>
